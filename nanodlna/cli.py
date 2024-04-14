@@ -119,7 +119,11 @@ def play(args):
         serve_ip = args.local_host
     else:
         serve_ip = streaming.get_serve_ip(target_ip)
-    files_urls = streaming.start_server(files, serve_ip)
+    if args.http_port:
+        serve_port = args.http_port
+    else:
+        serve_port = 9000
+    files_urls = streaming.start_server(files, serve_ip, serve_port=serve_port)
 
     logging.info("Streaming server ready")
 
@@ -181,6 +185,13 @@ def run():
         description="A minimal UPnP/DLNA media streamer.")
     parser.set_defaults(func=lambda args: parser.print_help())
     parser.add_argument("-H", "--host", dest="local_host")
+    parser.add_argument(
+        "-P",
+        "--port",
+        dest="http_port",
+        default=9000,
+        type=int
+    )
     parser.add_argument("-t", "--timeout", type=float, default=5)
     parser.add_argument("-b", "--debug",
                         dest="debug_activated", action="store_true")
